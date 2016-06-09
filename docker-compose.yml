@@ -3,7 +3,7 @@ data:
     volumes:
         - /var/lib/mysql
 
-db:
+zabbix-db:
     image: zabbix/zabbix-db-mariadb
     volumes_from:
         - data
@@ -13,7 +13,7 @@ db:
         - MARIADB_USER=zabbix
         - MARIADB_PASS=zabbix
 
-app:
+zabbix-server:
     image: zabbix/zabbix-3.0:latest
     volumes:
         - /etc/localtime/etc/localtime:ro
@@ -22,7 +22,18 @@ app:
         - ZS_DBUser=zabbix
         - ZS_DBPassword=zabbix
     links:
-        - db
+        - zabbix-db
     ports:
         - 80:80
         - 10051:10051
+
+zabbix-agent:
+    image: zabbix/zabbix-3.0:latest
+    volumes:
+        - /etc/localtime/etc/localtime:ro
+    ports:
+        - 10050:10050
+    links:
+        - zabbix-server
+
+
