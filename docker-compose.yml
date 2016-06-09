@@ -1,0 +1,28 @@
+data:
+    image: busybox
+    volumes:
+        - /var/lib/mysql
+
+db:
+    image: zabbix/zabbix-db-mariadb
+    volumes_from:
+        - data
+    volumes:
+        - /etc/localtime/etc/localtime:ro
+    environment:
+        - MARIADB_USER=zabbix
+        - MARIADB_PASS=zabbix
+
+app:
+    image: zabbix/zabbix-3.0:latest
+    volumes:
+        - /etc/localtime/etc/localtime:ro
+    environment:
+        - ZS_DBHost=db
+        - ZS_DBUser=zabbix
+        - ZS_DBPassword=zabbix
+    links:
+        - db
+    ports:
+        - 80:80
+        - 10051:10051
